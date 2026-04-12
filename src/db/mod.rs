@@ -1,3 +1,5 @@
+pub mod migrations;
+
 use sqlx::PgPool;
 
 pub async fn connect_db(database_url: &str) ->PgPool {

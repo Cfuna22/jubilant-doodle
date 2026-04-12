@@ -1,4 +1,5 @@
 use sqlx::PgPool;
+use crate::models::job::Job;
 
 pub async fn create_job(pool: &PgPool, title: String) -> Result<(), sqlx::Error> {
     sqlx::query!(
@@ -10,4 +11,15 @@ pub async fn create_job(pool: &PgPool, title: String) -> Result<(), sqlx::Error>
     .await?;
     
     Ok(())
+}
+
+pub async fn get_jobs(pool: &PgPool) -> Result<Vec<Job>, sqlx::Error> {
+    let jobs = sqlx::query_as!(
+        Job,
+        "SELECT id, title FROM jobs"
+    )
+    .fetch_all(pool)
+    .await?;
+    
+    Ok(jobs)
 }
