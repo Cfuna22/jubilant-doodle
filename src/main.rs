@@ -6,7 +6,7 @@ mod models;
 use axum::{
     routing::post,
     Router,
-    extract::State,
+    // extract::State,
 };
 use dotenvy::dotenv;
 use std::env;
@@ -19,7 +19,7 @@ async fn main() {
     let pool = db::connect_db(&database_url).await;
 
     let app = Router::new()
-        .route("/jobs", post(handlers::job_handler::create_job))
+        .route("/jobs", post(handlers::job_handlers::create_job))
         .with_state(pool);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3001")
