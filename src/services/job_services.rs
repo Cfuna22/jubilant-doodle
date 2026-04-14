@@ -23,3 +23,15 @@ pub async fn get_jobs(pool: &PgPool) -> Result<Vec<Job>, sqlx::Error> {
     
     Ok(jobs)
 }
+
+pub async fn create_some(pool: &PgPool, title: String) -> Result<(), sqlx::Error> {
+    sqlx::query!(
+        "INSERT INTO jobs (id, title) VALUES ($1, $2)",
+        uuid::Uuid::new_v4(),
+        title
+    )
+    .execute(pool)
+    .await?;
+
+    Ok(())
+}
