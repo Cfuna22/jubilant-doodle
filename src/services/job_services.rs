@@ -1,5 +1,10 @@
 use sqlx::PgPool;
-use crate::models::job::Job;
+use uuid::Uuid;
+
+pub struct Job {
+    pub id: Uuid,
+    pub title: String,
+}
 
 pub async fn create_job(pool: &PgPool, title: String) -> Result<(), sqlx::Error> {
     sqlx::query!(
@@ -13,15 +18,22 @@ pub async fn create_job(pool: &PgPool, title: String) -> Result<(), sqlx::Error>
     Ok(())
 }
 
-pub async fn get_jobs(pool: &PgPool) -> Result<Vec<Job>, sqlx::Error> {
-    let jobs = sqlx::query_as!(
+pub async fn get_jobs(pool: &PgPool) -> Vec<Job> {
+    let rows = sqlx::query_as!(
         Job,
         "SELECT id, title FROM jobs"
     )
     .fetch_all(pool)
-    .await?;
+    .await
+    .unwrap();
     
-    Ok(jobs)
+    rows
+        .into_iter()
+        .map(|row| Job {
+            id: row.id,
+            title: row.title,
+        })
+        .collect()
 }
 
 pub async fn create_some(pool: &PgPool, title: String) -> Result<(), sqlx::Error> {
