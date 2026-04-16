@@ -24,12 +24,7 @@ pub async fn create_job(
 
 pub async fn get_jobs(
     State(pool): State<PgPool>,
-) -> impl IntoResponse {
-    match job_services::get_jobs(&pool).await {
-        Ok(jobs) => (StatusCode::OK, Json(jobs)).into_response(),
-        Err(e) => {
-            eprintln!("Failed to get jobs: {}", e);
-            (StatusCode::INTERNAL_SERVER_ERROR, "Failed to get jobs").into_response()
-        }
-    }
+) -> Json<Vec<job_services::Job>> {
+    let jobs = job_services::get_jobs(&pool).await;
+    Json(jobs)
 }
